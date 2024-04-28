@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# this script checks that we are on master branch, there are no uncommitted changes,
+# this script checks that we are on master/main branch, there are no uncommitted changes,
 # and latest changes are pulled from remote
 
 # we want exit immediately if any command fails and we want error in piped commands to be preserved
@@ -29,9 +29,9 @@ while [[ $# > 0 ]] ; do
 	[[ $# > 0 ]] && shift;
 done
 
-echo "check that we are on master branch"
+echo "check that we are on master/main branch"
 branch=$(git rev-parse --abbrev-ref HEAD)
-[ "$branch" == "master" ] || source myci-error.sh "not on master branch"
+[ "$branch" == "master" ] || [ "$branch" == "main" ] || source myci-error.sh "not on master/main branch"
 
 echo "check for uncommitted changes"
 [ -z "$(git diff-index HEAD --)" ] || source myci-error.sh "uncommitted changes detected"
@@ -39,8 +39,8 @@ echo "check for uncommitted changes"
 echo "fetch latest"
 git fetch || source myci-error.sh "git fetch failed"
 
-echo "check for master up to date"
-[ -z "$(git status --short --branch | sed -E -n -e 's/.*(behind).*/true/p')" ] || source myci-error.sh "local master is behind remote master, do git pull and try again"
+echo "check for master/main up to date"
+[ -z "$(git status --short --branch | sed -E -n -e 's/.*(behind).*/true/p')" ] || source myci-error.sh "local master/main is behind remote master/main, do git pull and try again"
 
 if [ "$no_unreleased_check" != "true" ]; then
     echo "check that debian/changelog is UNRELEASED"

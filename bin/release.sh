@@ -46,7 +46,9 @@ git commit --all --message="release $version" || source myci-error.sh "git commi
 
 git branch --force latest HEAD || source myci-error.sh "git branch --force latest HEAD failed"
 
-git push --set-upstream origin latest master || source myci-error.sh "git push failed"
+branch=$(git rev-parse --abbrev-ref HEAD)
+
+git push --set-upstream origin latest $branch || source myci-error.sh "git push failed"
 
 git tag $version || source myci-error.sh "git tag failed"
 
