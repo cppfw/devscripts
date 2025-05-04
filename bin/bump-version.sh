@@ -37,7 +37,13 @@ done
 
 [ ! -z "$comment" ] || source myci-error.sh "comment as argument expected"
 
-version=$(myci-deb-version.sh debian/changelog)
+if [ -d debian ]; then
+	deb_root_dir=.
+elif [ -d build/debian ]; then
+	deb_root_dir=build
+fi
+
+version=$(myci-deb-version.sh $deb_root_dir/debian/changelog)
 
 # echo $version
 
@@ -57,4 +63,4 @@ fi
 
 echo new version = $newver
 
-dch --newversion="$newver" "$comment" || source myci-error.sh "updating debian/changelog failed"
+(cd $deb_root_dir; dch --newversion="$newver" "$comment" || source myci-error.sh "updating debian/changelog failed")
